@@ -1,6 +1,8 @@
 const dotenv = require('dotenv').config();
+
 var moment = require('moment');
 moment().format();
+
 var keys = require("./keys.js");
 const axios = require('axios');
 
@@ -14,11 +16,7 @@ for (var i = 3; i < cmdArgs.length; i++) {
 
 
 var Spotify = require('node-spotify-api');
-
-var spotify = new Spotify({
-  id: '1d59844cc57840288131ecdf8d4bb81f',
-  secret: 'ee6e163fb617422ca234cad359914bde'
-});
+var spotify = new Spotify(keys.spotify);
 
 function spotifySong(song) {
   var search;
@@ -28,27 +26,30 @@ function spotifySong(song) {
     search = song;
   }
 
-  axios.get(spotify)
-    .then(function (track, search, data) {
-      console.log(data);
-      console.log(track);
-      console.log(search);
-      var outputStr = '--------------\n' +
-        'Song Information:\n' +
-        '---------------------\n\n' +
-        'Song Name: ' + data.name + '\n' +
-        'Artist: ' + data.artist[0].name + '\n' +
-        'Album: ' + data.album.name + '\n' +
-        'Preview Here: ' + data.preview_url + '\n';
-      console.log(outputStr)
-    })
-    .catch(function (error) {
-      console.log(error);
-    })
-    .finally(function () {
-    })
-}
+  spotify.search({ type: 'track', query: search })
+  .then(function(response) {
 
+
+    for (var i = 0; i < 19; i++) {
+//A preview link of the song from Spotify
+//The album that the song is from
+
+      var outputEvent = '------------------------\n' +
+        'Song Information:\n' +
+        '------------------------\n\n' +
+        'Name of Artist: ' + response.tracks.items[i].artists[0].name + '\n' +
+        'Name of Song: ' + response.tracks.items[i].name + '\n' +
+        'URL of Song: ' + response.tracks.items[i].href + '\n' +
+        'Name of Album: ' + response.tracks.items[i].name + '\n' +
+        '------------------------' + '\n'
+      console.log(outputEvent);
+    }
+  })
+  .catch(function(err) {
+    console.log(err);
+  });
+
+}
 
 
 function retEventInfo(artist) {
