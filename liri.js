@@ -80,17 +80,25 @@ function retEventInfo(artist) {
   var eventSearch = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
 
   request(eventSearch, function (error, response, body) {
-    if (error|| (response.statusCode !== 200)) {
+    
+    if (error || (response.statusCode !== 200)) {
       var error1 = 'ERROR: Retrieving bands_in_town entry -- ' + error;
       console.log(error1)
       return;
-    } else {
+
+    }
+
+    else {
       var data = JSON.parse(body);
+
       if (!data.venue && !data.location && !data.datetime) {
         var error2 = 'ERROR: No event info found';
         console.log(error2)
         return;
-      } else {
+      } 
+
+      else {
+
         var outputEvent = '------------------------\n' +
           'Event Information:\n' +
           '------------------------\n\n' +
@@ -98,7 +106,7 @@ function retEventInfo(artist) {
           'Location: ' + data.location + '\n' +
           'Date & Time: ' + data.datetime + '\n' +
           '------------------------' + '\n'
-          console.log(outputStr);
+        console.log(outputEvent);
       }
     }
   });
