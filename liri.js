@@ -48,8 +48,21 @@ async function getUser() {
 */
 
 //spotify example
-//var spotify = new Spotify(keys.spotify);
 
+var Spotify = require('node-spotify-api');
+ 
+var spotify = new Spotify({
+  id: '1d59844cc57840288131ecdf8d4bb81f',
+  secret: 'ee6e163fb617422ca234cad359914bde'
+});
+ 
+spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
+  if (err) {
+    return console.log('Error occurred: ' + err);
+  }
+ 
+console.log(data); 
+});
 
 
 //vars for user input
@@ -80,7 +93,7 @@ function retEventInfo(artist) {
   var eventSearch = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
 
   request(eventSearch, function (error, response, body) {
-    
+
     if (error || (response.statusCode !== 200)) {
       var error1 = 'ERROR: Retrieving bands_in_town entry -- ' + error;
       console.log(error1)
@@ -112,6 +125,24 @@ function retEventInfo(artist) {
   });
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Determine which LIRI command is being requested
 
