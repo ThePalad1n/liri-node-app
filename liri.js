@@ -78,5 +78,6 @@ if (liriCmd === 'my-tweets') {
 
   //simeon says
 } else if (liriCmd ===  `do-what-it-says`) {
-	doAsTheySay();
+  doAsTheySay();
+  
 }
