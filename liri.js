@@ -1,8 +1,8 @@
-
-
-const dotenv = require('dotenv').config()
+const dotenv = require('dotenv').config();
 var moment = require('moment');
-moment().format()
+moment().format();
+
+var keys = require("./keys.js");
 
 const axios = require('axios');
  
@@ -45,3 +45,9 @@ async function getUser() {
     console.error(error);
   }
 }
+
+
+
+
+
+var spotify = new Spotify(keys.spotify);
