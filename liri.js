@@ -2,19 +2,12 @@ const dotenv = require('dotenv').config();
 var moment = require('moment');
 moment().format();
 var keys = require("./keys.js");
-
 const axios = require('axios');
-
-
-
-
-//vars for user input
 
 var cmdArgs = process.argv;
 var liriCmd = process.argv[2];
 var liriArg = '';
 
-//determining th Arg
 for (var i = 3; i < cmdArgs.length; i++) {
   liriArg += cmdArgs[i] + '';
 }
@@ -28,7 +21,6 @@ var spotify = new Spotify({
 });
 
 function spotifySong(song) {
-
   var search;
   if (song === '') {
     search = 'The Sign Of Ace';
@@ -36,83 +28,36 @@ function spotifySong(song) {
     search = song;
   }
 
-  spotify.search({ type: 'track', query: search }, function (error, data) {
-    if (error) {
-      var error1 = 'ERROR: Retrieving Spotify track -- ' + error;
-      console.log(error1);
-      return;
-    }
-    else {
-      var songInfo = data.tracks.items[0];
-      if (!songinfo) {
-        var error2 = 'ERROR: No song info retrieved';
-        console.log(error2);
-        return;
-      }
-      else {
-        var outputStr = '--------------\n' +
-          'Song Information:\n' +
-          '---------------------\n\n' +
-          'Song Name: ' + songInfo.name + '\n' +
-          'Artist: ' + songInfo.artist[0].name + '\n' +
-          'Album: ' + songInfo.album.name + '\n' +
-          'Preview Here: ' + songInfo.preview_url + '\n';
-        console.log(outputStr)
-      }
-    }
-  });
+  axios.get(spotify)
+    .then(function (track, search, data) {
+      console.log(data);
+      console.log(track);
+      console.log(search);
+      var outputStr = '--------------\n' +
+        'Song Information:\n' +
+        '---------------------\n\n' +
+        'Song Name: ' + data.name + '\n' +
+        'Artist: ' + data.artist[0].name + '\n' +
+        'Album: ' + data.album.name + '\n' +
+        'Preview Here: ' + data.preview_url + '\n';
+      console.log(outputStr)
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .finally(function () {
+    })
 }
-
-/*
-function spotifySong(song) {
-  var search;
-  if (song === '') {
-    search = 'ADHD';
-  } else {
-    search = song;
-  }
-
-  spotify.search({ type: 'track', query: search }, function (error, data) {
-    if (error) {
-      var error1 = 'ERROR: Retrieving Spotify track -- ' + error;
-      console.log(error1);
-      return;
-    }
-    else {
-      var songInfo = data.tracks.items[0];
-      if (!songinfo) {
-        var errorStr2 = 'ERROR: No song info retrieved';
-        console.log(errorStr2);
-        return;
-      }
-      else {
-        var outputSong = '--------------\n' +
-          'Song Information:\n' +
-          '---------------------\n\n' +
-          'Song Name: ' + songInfo.name + '\n' +
-          'Artist: ' + songInfo.artist[0].name + '\n' +
-          'Album: ' + songInfo.album.name + '\n' +
-          'Preview Here: ' + songInfo.preview_url + '\n';
-        console.log(outputSong)
-      }
-    }
-  });
-}
-*/
-
 
 
 
 function retEventInfo(artist) {
-
-  // If no movie is provided, LIRI defaults to 'blink182'
   var search;
   if (artist === '') {
     search = 'blink182';
   } else {
     search = artist;
   }
-
   var eventSearch = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
 
   axios.get(eventSearch)
@@ -129,39 +74,87 @@ function retEventInfo(artist) {
       }
     })
     .catch(function (error) {
-      // handle error
       console.log(error);
     })
     .finally(function () {
-      // always executed
     });
 }
 
 
 
 
+function retOBDBInfo(movie) {
+  var search;
+  if (movie === '') {
+    search = 'matrix';
+  } else {
+    search = movie;
+  }
+
+  axios.get("http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy")
+    .then(function (response) {
+      console.log(response);
+      var outputEvent = '------------------------\n' +
+        'Movie Information:\n' + 
+        'Title of the movie: ' + response.data.Title + '\n' +
+        'Year the movie came out: ' + response.data.Year + '\n' +
+        'IMDB Rating of the movie: ' + response.data.imdbRating + '\n' +
+        'Rotten Tomatoes Rating of the movie: ' + response.data.Ratings + '\n' +
+        'Country where the movie was produced: ' + response.data.Country + '\n' +
+        'Language of the movie: ' + response.data.Language + '\n' +
+        'Plot of the movie: ' + response.data.Plot + '\n' +
+        'Actors in the movie: ' + response.data.Actors + '\n' 
+
+        console.log(outputEvent);
+    })
+    .catch(function (error) {
+      if (error.response) {
+        console.log("---------------Data---------------");
+        console.log(error.response.data);
+        console.log("---------------Status---------------");
+        console.log(error.response.status);
+        console.log("---------------Status---------------");
+        console.log(error.response.headers);
+      } else if (error.request) {
+      
+        console.log(error.request);
+      } else {
+      
+        console.log("Error", error.message);
+      }
+      console.log(error.config);
+    });
+}
+
+function doAsTheySay() {
+	fs.readFile('./random.txt', 'utf8', function (error, data) {
+		if (error) {
+			console.log('ERROR: Reading random.txt -- ' + error);
+			return;
+		} else {
+			// Split out the command name and the parameter name
+			var cmdString = data.split(',');
+			var cmd = cmdString[0].trim();
+			var par = cmdString[1].trim();
+
+			switch(cmd) {
+				case 'concert-this':
+					retEventInfo(); 
+					break;
+
+				case 'spotify-this-song':
+					spotifySong(par);
+					break;
+
+				case 'movie-this':
+					retOBDBInfo(par);
+					break;
+			}
+		}
+	});
+}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Determine which LIRI command is being requested
-
-//artist events
 if (liriCmd === `concert-this`) {
   retEventInfo(liriArg);
 
@@ -171,7 +164,7 @@ if (liriCmd === `concert-this`) {
 
   //movies  
 } else if (liriCmd === `movie-this`) {
-  retrieveOBDBInfo(liriArg);
+  retOBDBInfo(liriArg);
 
   //simeon says
 } else if (liriCmd === `do-what-it-says`) {
