@@ -89,7 +89,6 @@ function retOBDBInfo(movie) {
 
   axios.get("http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy")
     .then(function (response) {
-      console.log(response);
       var outputEvent = '------------------------\n' +
         'Movie Information:\n' + 
         'Title of the movie: ' + response.data.Title + '\n' +
