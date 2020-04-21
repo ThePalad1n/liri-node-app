@@ -1,10 +1,11 @@
 const dotenv = require('dotenv').config();
-
+var Spotify = require('node-spotify-api');
 var moment = require('moment');
 moment().format();
-
 var keys = require("./keys.js");
 const axios = require('axios');
+const fs = require('fs');
+
 
 var cmdArgs = process.argv;
 var liriCmd = process.argv[2];
@@ -14,10 +15,7 @@ for (var i = 3; i < cmdArgs.length; i++) {
   liriArg += cmdArgs[i] + '';
 }
 
-
-var Spotify = require('node-spotify-api');
 var spotify = new Spotify(keys.spotify);
-
 function spotifySong(song) {
   var search;
   if (song === '') {
@@ -31,9 +29,6 @@ function spotifySong(song) {
 
 
     for (var i = 0; i < 19; i++) {
-//A preview link of the song from Spotify
-//The album that the song is from
-
       var outputEvent = '------------------------\n' +
         'Song Information:\n' +
         '------------------------\n\n' +
@@ -127,6 +122,8 @@ function retOBDBInfo(movie) {
     });
 }
 
+
+
 function doAsTheySay() {
 	fs.readFile('./random.txt', 'utf8', function (error, data) {
 		if (error) {
@@ -154,6 +151,8 @@ function doAsTheySay() {
 		}
 	});
 }
+
+
 
 
 if (liriCmd === `concert-this`) {
